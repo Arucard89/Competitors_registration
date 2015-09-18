@@ -317,7 +317,31 @@ object ChangeDefaultsForm: TChangeDefaultsForm
         DataController.Filter.Criteria = {00000000}
         DataController.Summary.DefaultGroupSummaryItems = <>
         DataController.Summary.FooterSummaryItems = <>
-        DataController.Summary.SummaryGroups = <>
+        DataController.Summary.SummaryGroups = <
+          item
+            Links = <
+              item
+                Column = cxGridDBTableView4DBColumn2
+              end>
+            SummaryItems = <
+              item
+                Kind = skCount
+                FieldName = 'weight'
+                Column = cxGridDBTableView4DBColumn2
+              end>
+          end
+          item
+            Links = <
+              item
+                Column = cxGridDBTableView4DBColumn3
+              end>
+            SummaryItems = <
+              item
+                Kind = skCount
+                FieldName = 't_weights.age'
+                Column = cxGridDBTableView4DBColumn3
+              end>
+          end>
         OptionsBehavior.ExpandMasterRowOnDblClick = True
         OptionsData.CancelOnExit = False
         OptionsData.Deleting = False

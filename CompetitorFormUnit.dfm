@@ -12,6 +12,7 @@ object CompetitorForm: TCompetitorForm
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 18
   object ParticipationMark: TCheckBox

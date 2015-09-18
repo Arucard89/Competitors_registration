@@ -15,6 +15,8 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     procedure BitBtn1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -37,6 +39,19 @@ begin
       ShowMessage('Не заполнена весовая категория')
     else
       ModalResult := mrOk;
+end;
+
+procedure TaddWeightForm.FormCreate(Sender: TObject);
+begin
+    //ставим форму по центру экрана
+  self.Left := (screen.Width - self.Width) div 2;
+  self.Top :=  (screen.Height - self.Height) div 2;
+end;
+
+procedure TaddWeightForm.FormShow(Sender: TObject);
+begin
+  weightEdit.SetFocus;
+  weightEdit.SelectAll;
 end;
 
 end.

@@ -132,7 +132,7 @@ begin
   //устанавливаем начальные значения
   AddValueForm.set_values(formName,labelName,mask);
 
-  if AddValueForm.ShowModal = mrOK then //пользователь подтвердил ввод
+  While AddValueForm.ShowModal = mrOK do //пользователь подтвердил ввод
   begin
     str := trim(AddValueForm.ValueEdit.Text);
     //Добавляем значение
@@ -149,6 +149,9 @@ end;
 
 procedure TChangeDefaultsForm.FormCreate(Sender: TObject);
 begin
+    //ставим форму по центру экрана
+  self.Left := (screen.Width - self.Width) div 2;
+  self.Top :=  (screen.Height - self.Height) div 2;
   //включаем все запросы
   ageQuery.Open;
   beltQuery.Open;
@@ -175,7 +178,7 @@ end;
 
 procedure TChangeDefaultsForm.ageAddBtnClick(Sender: TObject);
 begin
-  add_new_value('Добавить возрастную категорию','Возрастная категория','###','age',ageQuery);
+  add_new_value('Добавить возрастную категорию','Возрастная категория','','age',ageQuery);
 end;
 
 procedure TChangeDefaultsForm.beltAddBtnClick(Sender: TObject);
@@ -220,7 +223,7 @@ end;
 
 procedure TChangeDefaultsForm.ageEditBtnClick(Sender: TObject);
 begin
-  edit_value('Изменить возрастную категорию','Возрастная категория','###','age',ageQuery);
+  edit_value('Изменить возрастную категорию','Возрастная категория','','age',ageQuery);
 end;
 
 procedure TChangeDefaultsForm.beltEditBtnClick(Sender: TObject);
@@ -241,8 +244,6 @@ end;
 procedure TChangeDefaultsForm.ageDeleteBtnClick(Sender: TObject);
 begin
   //защита от дурака
-  ageQuery.Close;
-  ageQuery.Open;
   if ageQuery.RecordCount <= 0 then
   begin
     ShowMessage('Список возрастов пуст. Удаление невозможно.');
@@ -254,13 +255,14 @@ begin
   //обновляем таблицу
   ageQuery.close;
   ageQuery.open;
+  //обновляем веса
+  weightQuery.Open;
+  weightQuery.Close;
 end;
 
 procedure TChangeDefaultsForm.beltDeleteBtnClick(Sender: TObject);
 begin
-  //защита от дурака
-  beltQuery.Close;
-  beltQuery.Open;
+//защита от дурака
   if beltQuery.RecordCount <= 0 then
   begin
     ShowMessage('Список возрастов пуст. Удаление невозможно.');
@@ -277,8 +279,6 @@ end;
 procedure TChangeDefaultsForm.CityDeleteBtnClick(Sender: TObject);
 begin
     //защита от дурака
-  cityQuery.Close;
-  cityQuery.Open;
   if cityQuery.RecordCount <= 0 then
   begin
     ShowMessage('Список возрастов пуст. Удаление невозможно.');
@@ -295,8 +295,7 @@ end;
 procedure TChangeDefaultsForm.ClubDeleteBtnClick(Sender: TObject);
 begin
     //защита от дурака
-  clubQuery.Close;
-  clubQuery.Open;
+
   if clubQuery.RecordCount <= 0 then
   begin
     ShowMessage('Список возрастов пуст. Удаление невозможно.');
@@ -359,7 +358,7 @@ begin
   addWeightForm.ageBox.Items.Text := DataModule1.ages_list.Text;
 
   //добавляем вес
-  if addWeightForm.ShowModal = mrOK then
+  while addWeightForm.ShowModal = mrOK do
   begin
     str := trim(addWeightForm.weightEdit.Text);
     if DataModule1.add_weight_query(str,addWeightForm.AgeBox.Text) <> 0 then
@@ -409,9 +408,6 @@ end;
 
 procedure TChangeDefaultsForm.weightDeleteBtnClick(Sender: TObject);
 begin
-  //хащита от дурака
-  weightQuery.Close;
-  weightQuery.Open;
   if weightQuery.RecordCount <= 0 then
   begin
     ShowMessage('Список весовых пуст. Удаление невозможно.');
@@ -422,9 +418,8 @@ begin
     with DataModule1 do
     begin
       DBQuery.Close;
-      DBQuery.SQL.Text := 'SELECT * FROM t_weights where id = ' + weightQuery.FieldByName('t_weights.id').AsString;
-      DBQuery.Open;
-      DBQuery.Delete;
+      DBQuery.SQL.Text := 'DELETE FROM t_weights where id = ' + weightQuery.FieldByName('t_weights.id').AsString;
+      DBQuery.ExecSQL;
       //обновляем
       weightQuery.Close;
       weightQuery.Open;

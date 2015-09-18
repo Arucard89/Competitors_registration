@@ -35,6 +35,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OKBtnClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
    // AddValueForm: TAddValueForm; //универсальная форма добавления
@@ -136,8 +137,10 @@ end;
 procedure TCompetitorForm.Button1Click(Sender: TObject);  //добавление возраста
 begin
 
-  add_new_value('Добавить возрастную категорию','Возрастная категория','###','t_ages', 'age',
+  add_new_value('Добавить возрастную категорию','Возрастная категория','','t_ages', 'age',
       'Не удалось обновить список весовых категорий. Возможны неполадки с базой.',ageBox);
+  AgeBoxChange(nil); //инициируем изменение комбобокса
+
 
 {  AddValueForm := TAddValueForm.Create(self);
   AddValueForm.set_values('Добавить возрастную категорию','Возрастная категория','###');
@@ -203,70 +206,26 @@ procedure TCompetitorForm.Button3Click(Sender: TObject);       //добавление кате
 begin
   add_new_value('Добавить пояс','Цвет пояса','','t_belts', 'belt',
       'Не удалось обновить список поясов. Возможны неполадки с базой.',beltBox);
-{
-  AddValueForm := TAddValueForm.Create(self);
-  AddValueForm.set_values('Добавить пояс','Цвет пояса','');
-  if AddValueForm.ShowModal = mrOK then
-  begin
-    if DataModule1.add_value_query('t_belts', 'belt', trim(AddValueForm.ValueEdit.Text)) <> 0 then
-      ShowMessage('Не удалось добавить значение в базу. Попробуйте еще раз.')
-    else
-    begin
-      //обновляем содержимое своего комбобокса поясов
-      if (load_list_to_combo('t_belts','belt',beltBox) <> 0) then
-        showmessage('Не удалось обновить список поясов. Возможны неполадки с базой.');
-    end
-  end;
-  AddValueForm.Destroy;
-  }
 end;
 
 procedure TCompetitorForm.Button4Click(Sender: TObject);      //добавление нового города
 begin
   add_new_value('Добавить город','Название города','','t_cities', 'city',
       'Не удалось обновить список городов. Возможны неполадки с базой.',cityBox);
-{
-  AddValueForm := TAddValueForm.Create(self);
-  AddValueForm.set_values('Добавить город','Название города','');
-  if AddValueForm.ShowModal = mrOK then
-  begin
-    if DataModule1.add_value_query('t_cities', 'city', trim(AddValueForm.ValueEdit.Text)) <> 0 then
-      ShowMessage('Не удалось добавить значение в базу. Попробуйте еще раз.')
-    else
-    begin
-      //обновляем содержимое своего комбобокса городов
-      if (load_list_to_combo('t_cities', 'city', cityBox) <> 0) then
-        showmessage('Не удалось обновить список городов. Возможны неполадки с базой.');
-    end
-  end;
-  AddValueForm.Destroy;
-  }
 end;
 
 procedure TCompetitorForm.Button5Click(Sender: TObject);
 begin
   add_new_value('Добавить клуб/тренера','Клуб/тренер','','t_clubs', 'club',
       'Не удалось обновить список клубов. Возможны неполадки с базой.',clubBox);
-{
-  AddValueForm := TAddValueForm.Create(self);
-  AddValueForm.set_values('Добавить клуб/тренера','Клуб/тренер','');
-  if AddValueForm.ShowModal = mrOK then
-  begin
-    if DataModule1.add_value_query('t_clubs', 'club', trim(AddValueForm.ValueEdit.Text)) <> 0 then
-      ShowMessage('Не удалось добавить значение в базу. Попробуйте еще раз.')
-    else
-    begin
-      //обновляем содержимое своего комбобокса клубов
-      if (load_list_to_combo('t_clubs', 'club',clubBox) <> 0) then
-        showmessage('Не удалось обновить список клубов. Возможны неполадки с базой.');
-    end
-  end;
-  AddValueForm.Destroy;
-  }
+
 end;
 
 procedure TCompetitorForm.FormCreate(Sender: TObject);
 begin
+  //ставим форму по центру экрана
+  self.Left := (screen.Width - self.Width) div 2;
+  self.Top :=  (screen.Height - self.Height) div 2;
 //Грузим все комбобоксы
   load_list_to_combo('t_ages','age',ageBox);
   load_list_to_combo('t_belts','belt',beltBox);
@@ -342,6 +301,12 @@ begin
   end;
 
   AddValueForm.Destroy;
+end;
+
+procedure TCompetitorForm.FormShow(Sender: TObject);
+begin
+  FIOEdit.SetFocus;
+  FIOEdit.SelectAll;
 end;
 
 end.

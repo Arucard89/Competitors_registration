@@ -7,7 +7,8 @@ uses
   Dialogs, cxStyles, cxCustomData, cxGraphics, cxFilter, cxData, cxEdit,
   DB, cxDBData, cxGridLevel, cxClasses, cxControls, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid, DataModuleUnit,
-  StdCtrls, ExtCtrls, CompetitorFormUnit, ChangeDefaultsUnit,CompetitorTableUnit ;
+  StdCtrls, ExtCtrls, CompetitorFormUnit, ChangeDefaultsUnit,CompetitorTableUnit,
+  Menus, cxExportGrid4Link;
 
 type
   TMainForm = class(TForm)
@@ -30,6 +31,13 @@ type
     cxGrid1DBTableView1DBColumn9: TcxGridDBColumn;
     ChangeDefaultsBtn: TButton;
     CompetitorTableBtn: TButton;
+    Panel3: TPanel;
+    GroupBox1: TGroupBox;
+    SearchEdit: TEdit;
+    Button1: TButton;
+    SearchLabel: TLabel;
+    PopupMenu1: TPopupMenu;
+    Export2Excel: TMenuItem;
     procedure FormResize(Sender: TObject);
     procedure AddBtnClick(Sender: TObject);
     procedure EditBtnClick(Sender: TObject);
@@ -43,6 +51,9 @@ type
     procedure DeleteBtnClick(Sender: TObject);
     procedure ChangeDefaultsBtnClick(Sender: TObject);
     procedure CompetitorTableBtnClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure SearchEditChange(Sender: TObject);
+    procedure Export2ExcelClick(Sender: TObject);
   //  procedure RadioButton2Click(Sender: TObject);
   private
     { Private declarations }
@@ -65,10 +76,37 @@ implementation
 {$R *.dfm}
 
 procedure TMainForm.FormResize(Sender: TObject);
+var h,b:integer;
 begin
   //подстраиваем €чейки таблицы под измененный размер
   cxGrid1DBTableView1.OptionsView.ColumnAutoWidth := true;
   cxGrid1DBTableView1.OptionsView.CellAutoHeight := true;
+
+  //измен€ем высоту кнопок в зависимости от высоты окна
+  b := 8; //промежуток между кнопками
+  h := (panel1.Height - b*(6+1)) div 6;//6 кнопок
+
+  AddBtn.Height := h;
+
+  EditBtn.Height := h;
+  EditBtn.Top := AddBtn.Top + h + b;
+
+  TemplateBtn.Height := h;
+  TemplateBtn.Top := EditBtn.Top + h + b;
+
+  DeleteBtn.Height := h;
+  DeleteBtn.Top := TemplateBtn.Top + h + b;
+
+  ChangeDefaultsBtn.Height := h;
+  ChangeDefaultsBtn.Top := DeleteBtn.Top + h + b;
+
+  CompetitorTableBtn.Height := h;
+  CompetitorTableBtn.Top := ChangeDefaultsBtn.Top + h + b;
+
+  Button1.Width := Panel3.Width - (600+8);
+
+
+
 end;
 
 procedure TMainForm.refresh_data;
@@ -104,6 +142,7 @@ begin
 end;
 
 procedure TMainForm.EditBtnClick(Sender: TObject); //изменение текущей записи
+var num : integer; //номер текущей записи
 begin
   CompetitorForm := TCompetitorForm.Create(self);
   prepare_form; //заполн€ем исходными данными
@@ -111,8 +150,11 @@ begin
     if edit_record <> 0 then
       ShowMessage('¬озникла ошибка при изменении записи');
   CompetitorForm.Destroy;
+  //cxGrid1DBTableView1.datacontroller.Refresh;
+  num := DataModule1.MainDataSource.DataSet.RecNo;
   //обновл€ем окно
   refresh_data;
+  DataModule1.MainDataSource.DataSet.RecNo := num; 
 end;
 
 function TMainForm.edit_record: integer;
@@ -235,7 +277,9 @@ end;  }
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  {cxGrid1DBTableView1DBColumn8.Options.Sorting := false; //выключаем сортировк по id (хронологии)  }
+  //ставим форму по центру экрана
+  self.Left := (screen.Width - self.Width) div 2;
+  self.Top :=  (screen.Height - self.Height) div 2;
 end;
 
 {procedure TMainForm.RadioButton2Click(Sender: TObject);
@@ -252,6 +296,12 @@ end;
 
 procedure TMainForm.DeleteBtnClick(Sender: TObject);
 begin
+  if DataModule1.MainQuery.IsEmpty then
+  begin
+    ShowMessage('—писок пуст, удаление невозможно.');
+    Exit;
+  end;
+
   if MessageDlg('ƒанное действие приведет к безвозвратному удалению записи из Ѕƒ. ¬ы уверены, что хотите удалить ее?',
       mtWarning,mbOKCancel,0) = mrOk then
   begin
@@ -269,7 +319,9 @@ begin
       DBQuery.Close;
     end
   end;
+  //cxGrid1DBTableView1.datacontroller.Refresh;   //не работает на удаление
   refresh_data;
+
 end;
 
 procedure TMainForm.ChangeDefaultsBtnClick(Sender: TObject);
@@ -284,6 +336,62 @@ procedure TMainForm.CompetitorTableBtnClick(Sender: TObject);//строим турнирную 
 begin
   CompetitorTableForm := TCompetitorTableForm.Create(self);
   CompetitorTableForm.ShowModal;
+end;
+
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+  DataModule1.MainQuery.Edit;
+  DataModule1.MainQuery.FieldByName('participation').AsBoolean := not DataModule1.MainQuery.FieldByName('participation').AsBoolean;
+  DataModule1.MainQuery.Post;
+  cxGrid1DBTableView1.datacontroller.Refresh;
+end;
+
+//procedure TMainForm.SearchBtnClick(Sender: TObject);
+//begin
+
+ // cxGrid1DBTableView1.OptionsBehavior.IncSearch := true;
+//  cxGrid1DBTableView1.OptionsBehavior.IncSearch.
+//    cxGrid1DBTableView1.DataController.Search.
+
+
+//end;
+
+procedure TMainForm.SearchEditChange(Sender: TObject);
+begin
+  if Trim(SearchEdit.Text) <> '' then  //если поле поиска непустое
+    if DataModule1.MainQuery.Locate('FIO',SearchEdit.Text,[loCaseInsensitive,loPartialKey]) = true then
+    begin
+      SearchLabel.Caption := '«апись найдена';
+      SearchLabel.Font.Color := clGreen;
+    end
+    else
+    begin
+      SearchLabel.Caption := '«апись отсутствует';
+      SearchLabel.Font.Color := clRed;
+    end
+  else        //если поле пустое
+    SearchLabel.Caption := '';
+end;
+
+procedure TMainForm.Export2ExcelClick(Sender: TObject);
+begin
+
+  with TSaveDialog.Create(self) do
+  try
+    DefaultExt := 'xls';
+    Filter := 'Excel files|*.xls';
+    if Execute then
+      if FileExists(FileName) = true then
+      begin
+        if MessageDlg('‘айл с данным именем уже существует. ѕерезаписать?', mtWarning,mbOKCancel, 0) = mrOk then
+          ExportGrid4ToExcel(FileName, cxGrid1, True, True, false);
+      end
+      else
+        ExportGrid4ToExcel(FileName, cxGrid1, True, True, false);
+  finally
+    Free;
+  end;
+
 end;
 
 end.

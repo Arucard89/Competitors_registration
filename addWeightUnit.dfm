@@ -12,6 +12,8 @@ object addWeightForm: TaddWeightForm
   Font.Name = 'Arial'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 18
   object Label1: TLabel
@@ -41,12 +43,12 @@ object addWeightForm: TaddWeightForm
   object weightEdit: TMaskEdit
     Left = 192
     Top = 32
-    Width = 145
+    Width = 141
     Height = 26
-    EditMask = '##c#'
-    MaxLength = 4
+    EditMask = '##cc##'
+    MaxLength = 6
     TabOrder = 1
-    Text = '    '
+    Text = '      '
   end
   object BitBtn1: TBitBtn
     Left = 144
@@ -81,7 +83,7 @@ object addWeightForm: TaddWeightForm
     Top = 80
     Width = 91
     Height = 41
-    Caption = #1054#1090#1084#1077#1085#1072
+    Caption = #1047#1072#1082#1088#1099#1090#1100
     TabOrder = 3
     Kind = bkCancel
   end

@@ -14,6 +14,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Регистрация участников на соревнования';
   Application.CreateForm(TDataModule1, DataModule1);
   //Application.CreateForm(TCompetitorTableForm, CompetitorTableForm);
   //Application.CreateForm(TaddWeightForm, addWeightForm);

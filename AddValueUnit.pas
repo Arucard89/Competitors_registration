@@ -14,6 +14,7 @@ type
     Label1: TLabel;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,6 +49,14 @@ end;
 procedure TAddValueForm.FormShow(Sender: TObject);
 begin
   ValueEdit.SetFocus;
+  ValueEdit.SelectAll;
+end;
+
+procedure TAddValueForm.FormCreate(Sender: TObject);
+begin
+    //ставим форму по центру экрана
+  self.Left := (screen.Width - self.Width) div 2;
+  self.Top :=  (screen.Height - self.Height) div 2;
 end;
 
 end.

@@ -12,6 +12,7 @@ object AddValueForm: TAddValueForm
   Font.Name = 'Arial'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 18
@@ -55,7 +56,7 @@ object AddValueForm: TAddValueForm
     Top = 88
     Width = 91
     Height = 25
-    Caption = #1054#1090#1084#1077#1085#1072
+    Caption = #1047#1072#1082#1088#1099#1090#1100
     TabOrder = 1
     Kind = bkCancel
   end
