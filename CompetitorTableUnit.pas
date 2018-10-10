@@ -12,7 +12,7 @@ uses
 type
 
   TClubsCountArr = record //массив участников категории
-    count: integer;//количество участников
+    count: integer ;//количество участников
     club: string;//имя клуба
     men: TStringList; // список участников данного клуба
   end;
